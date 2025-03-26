@@ -1,0 +1,89 @@
+/*package controller;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+public class WebScrapingJava {
+    private static final String url = "https://www.gov.br/ans/pt-br/acesso-a-informacao/participacao-da-\n" +
+            "sociedade/atualizacao-do-rol-de-procedimentos";
+    private static final String download = "anexos.pdf";
+    private static final String zip_arquive = "anexos.zip";
+
+
+}
+
+
+public class Main {
+    private static final String url = "https://www.gov.br/ans/pt-br/acesso-a-informacao/participacao-da-sociedade/atualizacao-do-rol-de-procedimentos";
+    private static final String download = "anexos_pdf";
+    private static final String zip_arquive = "anexos.zip";
+
+    public static void main(String[] args) {
+        try {
+            Files.createDirectories(Paths.get(download));
+            Document doc = Jsoup.connect(url).get();
+
+            //Busca links para os arquivos pdf
+            Elements links = doc.select("a[href$=.pdf]");
+            for (Element link : links) {
+                String pdfUrl = link.absUrl("href");
+                String fileName = pdfUrl.substring(pdfUrl.lastIndexOf('/') + 1);
+                System.out.println("Baixando: " + fileName);
+
+                downloadFile(pdfUrl, download + "/" + zip_arquive);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    //Metodo para baixar o arquivo
+    private static void downloadFile(String fileUrl, String savePath){
+        try(InputStream in = new URL(fileUrl).openStream();
+            OutputStream out = new FileOutputStream(savePath)){
+
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = in.read(buffer)) != -1){
+                out.write(buffer, 0, bytesRead);
+            }
+            System.out.println("Dowload Concluido: " + savePath);
+        }catch (IOException e){
+            System.err.println("Erro ao baixar arquivo: " + fileUrl);
+            e.printStackTrace();
+        }
+    }
+
+    private static void zipFiles(String sourceFolder, String zipFileName){
+        try(FileOutputStream fileOut = new FileOutputStream(zipFileName);
+            ZipOutputStream zipOut = new ZipOutputStream(fileOut)){
+
+            Files.walk(Paths.get(sourceFolder)).filter(Files::isRegularFile)
+                    .forEach(file ->{
+                        try{
+                            ZipEntry zipEntry = new ZipEntry(file.getFileName().toString());
+                            Files.copy(file, zipOut);
+                            zipOut.closeEntry();
+                        } catch (IOException e){
+                            System.err.println("Erro ao compactar: " + file);
+                            e.printStackTrace();
+                        }
+                    });
+
+        } catch (IOException e){
+            System.err.println("Erro ao criar ZIP.");
+            e.printStackTrace();
+        }
+    }
+}/*

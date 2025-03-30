@@ -91,6 +91,48 @@ DELIMITER ';'
 CSV HEADER
 ENCODING 'LATIN1';
 
-delete from demonstracoes_contabeis
+
 
 select * from demonstracoes_contabeis
+
+--Query 1
+SELECT 
+    dc.registro_ans,
+    op.razao_social,
+    op.modalidade,
+    ABS(CAST(REPLACE(REPLACE(dc.vl_saldo_final, '.', ''), ',', '.') AS DECIMAL(15,2))) AS valor_despesa_ultimo_trimestre
+FROM 
+    demonstracoes_contabeis dc
+JOIN 
+    operadoras_ativas op ON dc.registro_ans = op.registro_ans
+WHERE 
+        dc.descricao LIKE '%EVENTOS/ SINISTROS CONHECIDOS OU AVISADOS DE ASSISTÊNCIA A SAÚDE MEDICO HOSPITALAR%'
+        OR dc.registro_ans = '411112' 
+ORDER BY 
+    valor_despesa_ultimo_trimestre DESC
+LIMIT 10;
+
+--Query 2
+SELECT 
+    da.registro_ans,
+    op.razao_social,
+    op.modalidade,
+    da.vl_saldo_final,
+    (
+        SELECT dc.descricao
+        FROM demonstracoes_contabeis dc
+        WHERE dc.registro_ans = da.registro_ans
+        AND dc.descricao LIKE '%EVENTOS%SINISTROS%'
+        LIMIT 1
+    ) AS exemplo_descricao_conta
+FROM 
+    demonstracoes_contabeis da
+JOIN 
+    operadoras_ativas op ON da.registro_ans = op.registro_ans
+ORDER BY 
+    da.vl_saldo_final DESC
+LIMIT 10;
+
+
+
+

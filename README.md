@@ -7,4 +7,4 @@
    1. Usando as dependencias apache.pdfbox e opencsv, foi possivel capturar a primeira linha da tabela de rol de procedimentos, obs: o ROL de procedimentos não estava com uma qualidade boa de texto, então mesmo fazendo com java ou python, a leitura ficou prejudicada
 3. Teste de banco de dados
    1. Feita a criação de base de dados a partir dos arquivos CRV em anexo, usado o comando COPY
-4. Construida a rota da API back end e a rota da APi front end, criado um simples design com bootstrap para busca e consulta de dados
+4. Construida a rota da API back end e a rota da APi front end, criado um simples design com vue para busca e consulta de dados, alem de criação de coleção no postman, melhor especificada no arquivo em anexo neste repositório
